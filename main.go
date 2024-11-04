@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	dataframe "github.com/datumbrain/go-dataframe"
+	"github.com/daniyalumer/csvdataframe/risklevel"
 )
 
 func main() {
@@ -19,24 +19,8 @@ func main() {
 		return
 	}
 
-	df := dataframe.CreateDataFrame(path, csv_name)
-	fmt.Println("Processing data...")
+	risklevel.RiskLevelAssessment(path, csv_name)
 
-	df.NewField("Risk Level")
-	for _, row := range df.FrameRecords {
-		if row.ConvertToInt("Score", df.Headers) <= 4 && row.ConvertToInt("Score", df.Headers) >= 0 {
-			row.Update("Risk Level", "High", df.Headers)
-		} else if row.ConvertToInt("Score", df.Headers) <= 7 && row.ConvertToInt("Score", df.Headers) >= 4 {
-			row.Update("Risk Level", "Medium", df.Headers)
-		} else if row.ConvertToInt("Score", df.Headers) <= 9 && row.ConvertToInt("Score", df.Headers) >= 8 {
-			row.Update("Risk Level", "Low", df.Headers)
-		} else {
-			row.Update("Risk Level", "No Risk", df.Headers)
-		}
-	}
-
-	df.Sort("Risk Level")
-	df.SaveDataFrame(path, "page-stats-aggregator.csv")
 	fmt.Println("Processing complete. Output saved to: page-stats-aggregator.csv")
 
 }
