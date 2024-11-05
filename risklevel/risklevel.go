@@ -10,6 +10,16 @@ import (
 
 func RiskLevelAssessment(inputPath string, outputFile string) {
 	inputPath, inputFileName := filepath.Split(inputPath)
+
+	if _, err := os.Stat(inputPath); err != nil {
+		if os.IsNotExist(err) {
+			log.Printf("Error: Input directory does not exist: %s\n", inputPath)
+			return
+		}
+		log.Printf("Error accessing input directory: %s\n", inputPath)
+		return
+	}
+
 	outputPath, outputFileName := filepath.Split(outputFile)
 	if _, err := os.Stat(outputPath); err != nil {
 		if os.IsNotExist(err) {
