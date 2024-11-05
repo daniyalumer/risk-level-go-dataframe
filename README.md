@@ -12,7 +12,7 @@ This Go program reads data from a CSV file, assigns a "Risk Level" based on page
 
 ## Overview
 
-This program utilizes the `go-dataframe` package to process CSV data. It adds a "Risk Level" column based on the "Score" field using these rules:
+This program utilizes the `go-dataframe` package to process CSV data. It accepts input and output paths as command-line arguments, adds a "Risk Level" column based on the "Score" field using these rules:
 
 - **Score 0-4:** `High`
 - **Score 5-7:** `Medium`
@@ -30,12 +30,21 @@ This program utilizes the `go-dataframe` package to process CSV data. It adds a 
 
 ## Usage
 
-1. Place your input CSV file in the same directory as the program
-2. Run the program:
+1. Ensure your input CSV file is accessible
+2. Run the program with the required arguments:
    ```bash
-   go run main.go
+   go run main.go -input <input_csv_path> -output <output_directory_path>
    ```
-3. The processed data will be saved in the root directory
+   
+   Example:
+   ```bash
+   go run main.go -input /path/to/stats.csv -output /path/to/output/directory/
+   ```
+
+3. The program will:
+   - Look for the CSV file at the specified input path
+   - Process the data
+   - Save the results to the specified output directory as `page-stats-aggregator.csv`
 
 ## Input Format
 

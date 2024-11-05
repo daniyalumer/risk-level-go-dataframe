@@ -1,28 +1,58 @@
 package risklevel
 
 import (
-	"fmt"
+	"log"
+	"os"
+	"path/filepath"
 
 	dataframe "github.com/datumbrain/go-dataframe"
 )
 
-func RiskLevelAssessment(path string, csv_name string) {
-	df := dataframe.CreateDataFrame(path, csv_name)
-	fmt.Println("Processing data...")
+func RiskLevelAssessment(inputPath string, outputFile string) {
+	inputPath, inputFileName := filepath.Split(inputPath)
+
+	if _, err := os.Stat(inputPath); err != nil {
+		if os.IsNotExist(err) {
+			log.Printf("Error: Input directory does not exist: %s\n", inputPath)
+			return
+		}
+		log.Printf("Error accessing input directory: %s\n", inputPath)
+		return
+	}
+
+	outputPath, outputFileName := filepath.Split(outputFile)
+	if _, err := os.Stat(outputPath); err != nil {
+		if os.IsNotExist(err) {
+			log.Printf("Error: Output directory does not exist: %s\n", outputPath)
+			return
+		}
+		log.Printf("Error accessing output directory: %s\n", outputPath)
+		return
+	}
+
+	df := dataframe.CreateDataFrame(inputPath, inputFileName)
+	log.Println("Processing data...")
 
 	df.NewField("Risk Level")
 	for _, row := range df.FrameRecords {
-		if row.ConvertToInt("Score", df.Headers) <= 4 && row.ConvertToInt("Score", df.Headers) >= 0 {
+		score := row.ConvertToInt("Score", df.Headers)
+		switch {
+		case score >= 0 && score <= 4:
 			row.Update("Risk Level", "High", df.Headers)
-		} else if row.ConvertToInt("Score", df.Headers) <= 7 && row.ConvertToInt("Score", df.Headers) >= 4 {
+		case score >= 4 && score <= 7:
 			row.Update("Risk Level", "Medium", df.Headers)
-		} else if row.ConvertToInt("Score", df.Headers) <= 9 && row.ConvertToInt("Score", df.Headers) >= 8 {
+		case score >= 7 && score <= 9:
 			row.Update("Risk Level", "Low", df.Headers)
-		} else {
+		case score == 10:
 			row.Update("Risk Level", "No Risk", df.Headers)
 		}
 	}
 
 	df.Sort("Risk Level")
-	df.SaveDataFrame("", "page-stats-aggregator")
+
+	log.Printf("Saving output to %s\n", outputPath)
+	if !df.SaveDataFrame(outputPath, outputFileName) {
+		log.Printf("Error: failed to save CSV to output path: %s\n", outputPath)
+		return
+	}
 }
