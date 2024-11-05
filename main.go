@@ -3,24 +3,25 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/daniyalumer/csvdataframe/risklevel"
 )
 
 func main() {
-	path := "."
+	path, fileName := filepath.Split(os.Args[1])
 
-	csv_name := "241015-page-stats-aggregator.csv"
+	outputPath := os.Args[2]
 
-	fmt.Printf("Looking for CSV file: %s in directory: %s\n", csv_name, path)
+	fmt.Printf("Looking for CSV file: %s in directory: %s\n", fileName, path)
 
-	if _, err := os.Stat(path + "/" + csv_name); os.IsNotExist(err) {
-		fmt.Printf("Error: CSV file not found: %s\n", csv_name)
+	if _, err := os.Stat(os.Args[1]); os.IsNotExist(err) {
+		fmt.Printf("Error: CSV file not found: %s\n", fileName)
 		return
 	}
 
-	risklevel.RiskLevelAssessment(path, csv_name)
+	risklevel.RiskLevelAssessment(path, fileName, outputPath)
 
-	fmt.Println("Processing complete. Output saved to: page-stats-aggregator.csv")
+	fmt.Println("Processing complete. Output saved to %s\n", outputPath)
 
 }
