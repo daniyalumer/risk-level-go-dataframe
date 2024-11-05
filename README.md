@@ -33,12 +33,12 @@ This program utilizes the `go-dataframe` package to process CSV data. It accepts
 1. Ensure your input CSV file is accessible
 2. Run the program with the required arguments:
    ```bash
-   go run main.go <input_csv_path> <output_directory_path>
+   go run main.go -input <input_csv_path> -output <output_directory_path>
    ```
    
    Example:
    ```bash
-   go run main.go /path/to/stats.csv /path/to/output/directory/
+   go run main.go -input /path/to/stats.csv -output /path/to/output/directory/
    ```
 
 3. The program will:

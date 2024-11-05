@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -9,19 +10,30 @@ import (
 )
 
 func main() {
-	path, fileName := filepath.Split(os.Args[1])
+	inputFile := flag.String("input", "", "Input CSV file path (required)")
+	outputPath := flag.String("output", "", "Output directory path (required)")
+	flag.Parse()
 
-	outputPath := os.Args[2]
+	if *inputFile == "" || *outputPath == "" {
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	path, fileName := filepath.Split(*inputFile)
 
 	fmt.Printf("Looking for CSV file: %s in directory: %s\n", fileName, path)
 
-	if _, err := os.Stat(os.Args[1]); os.IsNotExist(err) {
-		fmt.Printf("Error: CSV file not found: %s\n", fileName)
+	if _, err := os.Stat(*inputFile); err != nil {
+		if os.IsNotExist(err) {
+			fmt.Printf("Error: CSV file not found: %s\n", fileName)
+		} else {
+			fmt.Printf("Error accessing file %s: %v\n", fileName, err)
+		}
 		return
 	}
 
-	risklevel.RiskLevelAssessment(path, fileName, outputPath)
+	risklevel.RiskLevelAssessment(path, fileName, *outputPath)
 
-	fmt.Println("Processing complete. Output saved to %s\n", outputPath)
+	fmt.Printf("Processing complete. Output saved to %s\n", *outputPath)
 
 }

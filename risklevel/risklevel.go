@@ -6,8 +6,8 @@ import (
 	dataframe "github.com/datumbrain/go-dataframe"
 )
 
-func RiskLevelAssessment(path string, csv_name string, output_path string) {
-	df := dataframe.CreateDataFrame(path, csv_name)
+func RiskLevelAssessment(path string, csvName string, outputPath string) {
+	df := dataframe.CreateDataFrame(path, csvName)
 	fmt.Println("Processing data...")
 
 	df.NewField("Risk Level")
@@ -25,8 +25,8 @@ func RiskLevelAssessment(path string, csv_name string, output_path string) {
 	}
 
 	df.Sort("Risk Level")
-	err := df.SaveDataFrame(output_path, "page-stats-aggregator")
-	if err == false {
-		fmt.Printf("Error: csv not saved to output %s\n", output_path)
+	if !df.SaveDataFrame(outputPath, "page-stats-aggregator") {
+		fmt.Printf("Error: failed to save CSV to output path: %s\n", outputPath)
+		return
 	}
 }
