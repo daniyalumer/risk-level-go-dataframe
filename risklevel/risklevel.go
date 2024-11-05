@@ -10,6 +10,15 @@ import (
 
 func RiskLevelAssessment(inputPath string, outputFile string) {
 	inputPath, inputFileName := filepath.Split(inputPath)
+	outputPath, outputFileName := filepath.Split(outputFile)
+	if _, err := os.Stat(outputPath); err != nil {
+		if os.IsNotExist(err) {
+			log.Printf("Error: Output directory does not exist: %s\n", outputPath)
+			return
+		}
+		log.Printf("Error accessing output directory: %s\n", outputPath)
+		return
+	}
 
 	df := dataframe.CreateDataFrame(inputPath, inputFileName)
 	log.Println("Processing data...")
@@ -30,16 +39,6 @@ func RiskLevelAssessment(inputPath string, outputFile string) {
 	}
 
 	df.Sort("Risk Level")
-
-	outputPath, outputFileName := filepath.Split(outputFile)
-	if _, err := os.Stat(outputPath); err != nil {
-		if os.IsNotExist(err) {
-			log.Printf("Error: Output directory does not exist: %s\n", outputPath)
-			return
-		}
-		log.Printf("Error accessing output directory: %s\n", outputPath)
-		return
-	}
 
 	log.Printf("Saving output to %s\n", outputPath)
 	if !df.SaveDataFrame(outputPath, outputFileName) {
