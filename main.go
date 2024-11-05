@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -21,19 +21,19 @@ func main() {
 
 	path, fileName := filepath.Split(*inputFile)
 
-	fmt.Printf("Looking for CSV file: %s in directory: %s\n", fileName, path)
+	log.Printf("Looking for CSV file: %s in directory: %s\n", fileName, path)
 
 	if _, err := os.Stat(*inputFile); err != nil {
 		if os.IsNotExist(err) {
-			fmt.Printf("Error: CSV file not found: %s\n", fileName)
+			log.Printf("Error: CSV file not found: %s\n", fileName)
 		} else {
-			fmt.Printf("Error accessing file %s: %v\n", fileName, err)
+			log.Printf("Error accessing file %s: %v\n", fileName, err)
 		}
 		return
 	}
 
 	risklevel.RiskLevelAssessment(path, fileName, *outputPath)
 
-	fmt.Printf("Processing complete. Output saved to %s\n", *outputPath)
+	log.Printf("Processing complete. Output saved to %s\n", *outputPath)
 
 }
